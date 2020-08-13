@@ -49,7 +49,9 @@ function getCards () {
       cards = data
       let o = []
       for (let i = 0; i < cards.length; i++) {
-        o.push(cards[i].name)
+        if (cards[i].legalities.commander === "legal") {
+          o.push(cards[i].name)
+        }
       }
       cardsData = o
       console.log(cardsData)
@@ -77,10 +79,59 @@ function smartSearch(query,data) {
   if (output[0].score > (ref / refWord.length) * minScoreCoefficent) {
     return output[0].result
   } else {
-    console.log(ref, output[0], (ref / refWord.length) * minScoreCoefficent)
+    // console.log(ref, output[0], (ref / refWord.length) * minScoreCoefficent)
     return 'No Results'
   }
 
+}
+
+function massTest() {
+  let successes = 0
+  let failures = 0
+  let total = 0
+  for (let i = 0; i < cardsData.length; i++) {
+    if (i % 100 === 0) {
+      console.log((i / cardsData.length) * 100)
+    }
+    let c = cardsData[i]
+
+
+    if (smartSearch(sl(c), cardsData) === c) {
+      successes++
+    }  else {
+      failures++
+    }
+    total++
+  }
+
+  return ((successes / total) * 100) + '% success'
+}
+
+function sl(text) {
+  let output = text
+  let offset = 0
+  for (let i = 0; i < text.length; i++) {
+    if (Math.random() > 0.8) {
+      if (Math.random() > 0.5) {
+        output = output.slice(0, i + offset) + randLetter() + output.slice(i + offset); //insertion
+        offset++
+      } else {
+        output[i+offset] = randLetter()
+      }
+    }
+  }
+  return output
+}
+
+
+function randLetter(length = 1) {
+   var result           = '';
+   var characters       = 'abcdefghijklmnopqrstuvwxyz';
+   var charactersLength = characters.length;
+   for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
 }
 
 
